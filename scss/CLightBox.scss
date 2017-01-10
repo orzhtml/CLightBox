@@ -1,0 +1,213 @@
+.CLightBox {
+	background-color: transparent;
+	box-sizing: border-box;
+	display: none;
+	height: 100%;
+	left: 0;
+	position: fixed;
+	top: 0;
+	transition: all 0.2s;
+	width: 100%;
+	z-index: 1001;
+	&.show {
+		display: block;
+	}
+	&.show-visible {
+		background-color: rgba(0,0,0,.5);
+	}
+	* {
+		box-sizing: border-box;
+	}
+	.icon {
+		cursor: pointer;
+		display: inline-block;
+		line-height: 18px;
+		vertical-align: middle;
+		&:before {
+			background: no-repeat;
+			background-size: 100%;
+			content: '';
+			display: inline-block;
+			height: 18px;
+			vertical-align: middle;
+			width: 18px;
+		}
+	}
+	.icon-close,
+	.icon-rotate,
+	.icon-left-rotating-90,
+	.icon-right-rotating-90,
+	.icon-next,
+	.icon-pause,
+	.icon-play,
+	.icon-prev {
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		width: 30px;
+	}
+	.icon-close {
+		&:before {
+			background-image: url("../img/icon/close.png");
+		}
+	}
+	.icon-rotate {
+		&:before {
+			background-image: url("../img/icon/rotating.png");
+		}
+	}
+	.icon-left-rotating-90 {
+		&:before {
+			background-image: url("../img/icon/left_rotating_90.png");
+		}
+	}
+	.icon-right-rotating-90 {
+		&:before {
+			background-image: url("../img/icon/right_rotating_90.png");
+		}
+	}
+	.icon-next {
+		&:before {
+			background-image: url("../img/icon/next.png");
+		}
+	}
+	.icon-pause {
+		&:before {
+			background-image: url("../img/icon/pause.png");
+		}
+	}
+	.icon-play {
+		&:before {
+			background-image: url("../img/icon/play.png");
+		}
+	}
+	.icon-prev {
+		&:before {
+			background-image: url("../img/icon/prev.png");
+		}
+	}
+	.CLightBox-bar {
+		left: 50%;
+		position: absolute;
+		top: 60px;
+		transform: translate(-50%,0%);
+	}
+	.CLightBox-toolbar {
+		background-color: hsla(0,0%,99%,.95);
+		background-clip: padding-box;
+		border-radius: 5px;
+		font-size: 0;
+		left: 50%;
+		position: absolute;
+		text-align: center;
+		top: -45px;
+		transform: translate(-50%,0%);
+		z-index: 2;
+	}
+	.CLightBox-cnt {
+		background-color: hsla(0,0%,99%,.95);
+		background-clip: padding-box;
+		border-radius: 6px;
+		cursor: move;
+		min-width: 200px;
+		min-height: 100px;
+		pointer-events: auto;
+	}
+	.layer {
+		background-color: #fff;
+		bottom: 0;
+		display: none;
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 45px;
+		z-index: 2;
+		&.active {
+			display: block;
+			&:after {
+				animation: whirl 1s infinite linear;
+			}
+		}
+		&:after {
+			background: url("../img/icon/loading.png") no-repeat;
+			-webkit-background-size: 100%;
+			background-size: 100%;
+			content: '';
+			display: block;
+			height: 50px;
+			left: 50%;
+			margin: -25px 0 0 -25px;
+			position: absolute;
+			top: 50%;
+			width: 50px;
+			z-index: 3;
+		}
+	}
+	.CLightBox-hd {
+		position: relative;
+		font-size: 0;
+		line-height: 0;
+		overflow: hidden;
+		text-align: center;
+	}
+	.title {
+		color: #333;
+		display: -webkit-box;
+		font-size: 16px;
+		height: 45px;
+		line-height: 45px;
+		overflow: hidden;
+		padding: 0 10px;
+		text-align: left;
+		text-overflow: ellipsis;
+		-webkit-box-orient: vertical;
+		-webkit-box-flex: 1;
+		-webkit-line-clamp: 1;
+		&:after {
+			content: " ";
+			height: 1px;
+			position: absolute;
+			-webkit-transform-origin: 0 0;
+			transform-origin: 0 0;
+			border-bottom: 1px solid #ddd;
+			bottom: 0;
+			left: 1px;
+			right: 1px;
+			-webkit-transform-origin: 0 100%;
+			transform-origin: 0 100%;
+			-webkit-transform: scaleY(.5);
+			transform: scaleY(.5);
+			width: 100%;
+		}
+	}
+	.CLightBox-bd {
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+		padding: 15px;
+		position: relative;
+		text-align: center;
+		user-select: none;
+	}
+	.img {
+		//		max-height: 470px;
+		//		min-height: 200px;
+	}
+	.CLightBox-ft {
+		border-bottom-left-radius: 6px;
+		border-bottom-right-radius: 6px;
+	}
+}
+@keyframes whirl {
+	0% {
+		transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+	}
+}
