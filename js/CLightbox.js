@@ -15,6 +15,7 @@
     var _horizontal = 1;
     var _vertical = 1;
     var _radian = 0;
+    var _angle = 1;
     var precision = 0.25;
     var leftLength = 0;
     var topLength = 0;
@@ -44,6 +45,11 @@
             return;
         }
         this.title = 1;
+        if (_angle == 4) {
+            _angle = 1;
+        } else {
+            _angle++;
+        }
         rotating(this);
     };
 
@@ -172,13 +178,41 @@
     };
 
     saveBtn.onclick = function () {
-    		var _fileType = '';
-    		if (fileType == 'png') {
-    			_fileType = 'image/png';
-    		} else {
-    			_fileType = 'image/jpeg';
-    		}
-        downloadFile(getLocalDate(), canvas.toDataURL(_fileType))
+        var _fileType = '';
+        if (fileType == 'png') {
+            _fileType = 'image/png';
+        } else {
+            _fileType = 'image/jpeg';
+        }
+
+        var __img = new Image();
+        var __canvas = document.createElement('canvas');
+        var __context = __canvas.getContext("2d");
+        var __imgSrc = imgSrc;
+        var __fileType = __imgSrc.replace(/.+\.|data:image\/([^;]+).*/i, '$1');
+        __img.src = __imgSrc;
+        __img.onload = function () {
+            var __w = __img.width * _horizontal;
+            var __h = __img.height * _horizontal;
+            var __angle_w = _angle == 1 || _angle == 3 ? __w : __h;
+            var __angle_h = _angle == 1 || _angle == 3 ? __h : __w;
+            __canvas.width = __angle_w;
+            __canvas.height = __angle_h;
+            // 旋转的弧度（注意不是角度）
+            if (_angle == 4) {
+                __context.translate(0, __w);
+            } else if (_angle == 3) {
+                __context.translate(__w, __h);
+            } else if (_angle == 2) {
+                __context.translate(__h, 0);
+            } else {
+                __context.translate(0, 0);
+            }
+            __context.rotate(_radian);
+            __context.scale(_horizontal, _vertical);
+            __context.drawImage(__img, 0, 0);
+            downloadFile(getLocalDate(), __canvas.toDataURL(_fileType));
+        };
     };
 
     // 重新绘图
@@ -284,7 +318,6 @@
     function base64Img2Blob(code) {
         var parts = code.split(';base64,');
         var contentType = parts[0].split(':')[1];
-        console.log(contentType);
         var raw = window.atob(parts[1]);
         var rawLength = raw.length;
         var uInt8Array = new Uint8Array(rawLength);
@@ -303,7 +336,6 @@
         evt.initEvent("click", false, false); //initEvent 不加后两个参数在FF下会报错
         aLink.download = fileName;
         aLink.href = URL.createObjectURL(blob);
-        console.log(URL.createObjectURL(blob))
         aLink.dispatchEvent(evt);
     }
 
