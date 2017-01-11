@@ -21,9 +21,9 @@
     var topLength = 0;
     var toggle = false;
     var base64 = '';
-    var GET_SUFFIX = /\.[^\.]+$/;
+    var GET_SUFFIX = /.+\.|data:image\/([^;]+).*/i;
     var imgSrc = canvas.getAttribute('data-src');
-    var fileType = imgSrc.replace(/.+\.|data:image\/([^;]+).*/i, '$1');
+    var fileType = imgSrc.replace(GET_SUFFIX, '$1');
 
     //img.crossOrigin = "anonymous";
     img.src = canvas.getAttribute('data-src');
@@ -178,18 +178,16 @@
     };
 
     saveBtn.onclick = function () {
-        var _fileType = '';
-        if (fileType == 'png') {
-            _fileType = 'image/png';
-        } else {
-            _fileType = 'image/jpeg';
-        }
-
         var __img = new Image();
         var __canvas = document.createElement('canvas');
         var __context = __canvas.getContext("2d");
         var __imgSrc = imgSrc;
-        var __fileType = __imgSrc.replace(/.+\.|data:image\/([^;]+).*/i, '$1');
+        var __fileType = '';
+        if (fileType == 'png') {
+            __fileType = 'image/png';
+        } else {
+            __fileType = 'image/jpeg';
+        }
         __img.src = __imgSrc;
         __img.onload = function () {
             var __w = __img.width * _horizontal;
@@ -198,7 +196,6 @@
             var __angle_h = _angle == 1 || _angle == 3 ? __h : __w;
             __canvas.width = __angle_w;
             __canvas.height = __angle_h;
-            // 旋转的弧度（注意不是角度）
             if (_angle == 4) {
                 __context.translate(0, __w);
             } else if (_angle == 3) {
@@ -208,10 +205,11 @@
             } else {
                 __context.translate(0, 0);
             }
+            // 旋转的弧度（注意不是角度）
             __context.rotate(_radian);
             __context.scale(_horizontal, _vertical);
             __context.drawImage(__img, 0, 0);
-            downloadFile(getLocalDate(), __canvas.toDataURL(_fileType));
+            downloadFile(getLocalDate(), __canvas.toDataURL(__fileType));
         };
     };
 
@@ -315,20 +313,6 @@
         })();
     }
 
-    function base64Img2Blob(code) {
-        var parts = code.split(';base64,');
-        var contentType = parts[0].split(':')[1];
-        var raw = window.atob(parts[1]);
-        var rawLength = raw.length;
-        var uInt8Array = new Uint8Array(rawLength);
-        for (var i = 0; i < rawLength; ++i) {
-            uInt8Array[i] = raw.charCodeAt(i);
-        }
-        return new Blob([uInt8Array], {
-            type: contentType
-        });
-    }
-
     function downloadFile(fileName, content) {
         var aLink = document.createElement('a');
         var blob = base64Img2Blob(content); //new Blob([content]);
@@ -337,6 +321,21 @@
         aLink.download = fileName;
         aLink.href = URL.createObjectURL(blob);
         aLink.dispatchEvent(evt);
+
+		// 转换 base64 为 Blob
+        function base64Img2Blob(code) {
+            var parts = code.split(';base64,');
+            var contentType = parts[0].split(':')[1];
+            var raw = window.atob(parts[1]);
+            var rawLength = raw.length;
+            var uInt8Array = new Uint8Array(rawLength);
+            for (var i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            return new Blob([uInt8Array], {
+                type: contentType
+            });
+        }
     }
 
     // 获取本地时间
@@ -352,6 +351,7 @@
             milliseconds: zeroize(date.getMilliseconds(), 3)
         };
 
+		// 补零
         function zeroize(n, len) {
             len = len || 2;
             n += '';
