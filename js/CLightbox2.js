@@ -9,9 +9,10 @@
     var reset = document.getElementById('reset');
     var save = document.getElementById('save');
 
-    var _radian = 0;
+    var _radian = _left = _top = 0;
     var _x = _y = 1;
     var _precision = 0.25;
+    var _toggle = false;
 
     rotate.onclick = function () {
         _radian += 90
@@ -91,12 +92,60 @@
     }
 
     reset.onclick = function () {
-        _radian = 0;
+        _radian = _left = _top = 0;
         _x = _y = 1;
         _precision = 0.25;
+        myImg.style.left = '0px';
+        myImg.style.top = '0px';
         percentage.innerHTML = (_x * 100) + '%';
         Transform(_radian, _x, _y);
     }
+
+    Transform(_radian, _x, _y);
+
+    $(document).on({
+        'mousemove': function (e) {
+            if (!!this.move) {
+                var posix = !document.move_target ? {
+                        'x': 0,
+                        'y': 0
+                    } : document.move_target.posix,
+                    callback = document.call_down || function () {
+                        $(this.move_target).css({
+                            'top': e.pageY - posix.y,
+                            'left': e.pageX - posix.x
+                        });
+                    };
+                callback.call(this, e, posix);
+            }
+        },
+        'mouseup': function (e) {
+            if (!!this.move) {
+                var callback = document.call_up || function () {};
+                callback.call(this, e);
+                $.extend(this, {
+                    'move': false,
+                    'move_target': null,
+                    'call_down': false,
+                    'call_up': false
+                });
+            }
+        }
+    });
+
+    $(myImg).on('mousedown', function (e) {    
+        var left = $(this).css('left').replace('px', '') * 1;
+        var top = $(this).css('top').replace('px', '') * 1;    
+        this.posix = {
+            'x': e.pageX - left,
+            'y': e.pageY - top
+        };
+        $.extend(document, {
+            'move': true,
+            'move_target': this
+        });
+        return false;
+    });
 
     function scaling(x, y, zoom) {
         function getZoom(scale, zoom) {
