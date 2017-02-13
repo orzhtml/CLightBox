@@ -1,4 +1,6 @@
 (function () {
+    var GET_SUFFIX = /.+\.|data:image\/([^;]+).*/i;
+
     var myImg = document.getElementById('myImg');
     var rotate = document.getElementById('rotate');
     var horizontal = document.getElementById('horizontal');
@@ -9,23 +11,35 @@
     var reset = document.getElementById('reset');
     var save = document.getElementById('save');
 
+    var _imgSrc = myImg.getAttribute('src');
+    var _fileType = _imgSrc.replace(GET_SUFFIX, '$1');
     var _radian = _left = _top = 0;
     var _x = _y = 1;
     var _precision = 0.25;
     var _toggle = false;
+    var _angle = 1;
+    var _xAngle = 0;
+    var _yAngle = 0;
 
     rotate.onclick = function () {
-        _radian += 90
+        if (_angle == 4) {
+            _angle = 1;
+        } else {
+            _angle++;
+        }
+        _radian += 90;
         Transform(_radian, _x, _y);
     };
 
     horizontal.onclick = function () {
         _x *= -1;
+        _xAngle = _xAngle == 1 ? 0 : 1; 
         Transform(_radian, _x, _y);
     };
 
     vertical.onclick = function () {
         _y *= -1;
+        _yAngle = _yAngle == 1 ? 0 : 1;
         Transform(_radian, _x, _y);
     };
 
@@ -56,7 +70,7 @@
         _x = xy.x;
         _y = xy.y;
 
-        percentage.innerHTML = (_x * 100) + '%';
+        percentage.innerHTML = (checkShaft(_x) * 100) + '%';
         Transform(_radian, _x, _y);
     }
 
@@ -87,16 +101,15 @@
         _x = xy.x;
         _y = xy.y;
 
-        percentage.innerHTML = (_x * 100) + '%';
+        percentage.innerHTML = (checkShaft(_x) * 100) + '%';
         Transform(_radian, _x, _y);
     }
 
     reset.onclick = function () {
-        _radian = _left = _top = 0;
-        _x = _y = 1;
+        _radian = _left = _top = _xAngle = _yAngle = 0;
+        _x = _y = _angle = 1;
         _precision = 0.25;
-        myImg.style.left = '0px';
-        myImg.style.top = '0px';
+        myImg.style.left = myImg.style.top = '0px';
         percentage.innerHTML = (_x * 100) + '%';
         Transform(_radian, _x, _y);
     }
@@ -147,6 +160,79 @@
         return false;
     });
 
+    save.onclick = function () {
+        var __img = new Image();
+        var __canvas = document.createElement('canvas');
+        var __context = __canvas.getContext("2d");
+        var __imgSrc = _imgSrc;
+        var __radian = _radian;
+        var __y = _y;
+        var __x = _x;
+        var __fileType = '';
+        if (_fileType == 'png') {
+            __fileType = 'image/png';
+        } else {
+            __fileType = 'image/jpeg';
+        }
+        __img.src = __imgSrc;
+        __img.onload = function () {
+            var __w = __img.width * checkShaft(__x);
+            var __h = __img.height * checkShaft(__x);
+            var __angle_w = _angle == 1 || _angle == 3 ? __w : __h;
+            var __angle_h = _angle == 1 || _angle == 3 ? __h : __w;
+            __canvas.width = __angle_w;
+            __canvas.height = __angle_h;
+            
+            if (_xAngle == 0 && _yAngle == 0) {
+            		if (_angle == 4) {
+                		__context.translate(0, __w);
+            		} else if (_angle == 3) {
+                		__context.translate(__w, __h);
+            		} else if (_angle == 2) {
+                		__context.translate(__h, 0);
+            		} else {
+                		__context.translate(0, 0);
+            		}
+            } else if (_xAngle == 0 && _yAngle == 1) {
+            		if (_angle == 4) {
+                		__context.translate(__h, __w);
+            		} else if (_angle == 3) {
+                		__context.translate(__w, 0);
+            		} else if (_angle == 2) {
+                		__context.translate(0, 0);
+            		} else {
+                		__context.translate(0, __h);
+            		}
+            } else if (_xAngle == 1 && _yAngle == 1) {
+            		if (_angle == 4) {
+                		__context.translate(__h, 0);
+            		} else if (_angle == 3) {
+                		__context.translate(0, 0);
+            		} else if (_angle == 2) {
+                		__context.translate(0, __w);
+            		} else {
+                		__context.translate(__w, __h);
+            		}
+            } else if (_xAngle == 1 && _yAngle == 0) {
+            		if (_angle == 4) {
+                		__context.translate(0, 0);
+            		} else if (_angle == 3) {
+                		__context.translate(0, __h);
+            		} else if (_angle == 2) {
+                		__context.translate(__h, __w);
+            		} else {
+                		__context.translate(__w, 0);
+            		}
+            }
+            
+            // 旋转的弧度（注意不是角度）
+            __context.rotate((_radian * Math.PI / 180 || 0));
+            __context.scale(__x, __y);
+            __context.drawImage(__img, 0, 0);
+            downloadFile(getLocalDate(), __canvas.toDataURL(__fileType));
+        };
+    };
+
     function scaling(x, y, zoom) {
         function getZoom(scale, zoom) {
             return scale > 0 && scale > -zoom ? zoom :
@@ -163,7 +249,7 @@
     }
 
     function checkShaft(scale) {
-        return scale < 0 ? -(scale) : scale;
+        return Math.abs(scale);
     }
 
     function Transform(radian, x, y) {
@@ -178,4 +264,56 @@
             element.style[arrPriex[i] + "Transform"] = value;
         }
     };
+
+    // 下载图片
+    function downloadFile(fileName, content) {
+        var aLink = document.createElement('a');
+        var blob = base64Img2Blob(content); //new Blob([content]);
+        var evt = document.createEvent("MouseEvents");
+        evt.initEvent("click", false, false); //initEvent 不加后两个参数在FF下会报错
+        aLink.download = fileName;
+        aLink.href = URL.createObjectURL(blob);
+        aLink.dispatchEvent(evt);
+
+        // 转换 base64 为 Blob
+        function base64Img2Blob(code) {
+            var parts = code.split(';base64,');
+            var contentType = parts[0].split(':')[1];
+            var raw = window.atob(parts[1]);
+            var rawLength = raw.length;
+            var uInt8Array = new Uint8Array(rawLength);
+            for (var i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            return new Blob([uInt8Array], {
+                type: contentType
+            });
+        }
+    }
+
+    // 获取本地时间
+    function getLocalDate() {
+        var date = new Date();
+        var dateObj = {
+            year: date.getFullYear(),
+            month: zeroize(date.getMonth() + 1),
+            day: zeroize(date.getDate()),
+            hours: zeroize(date.getHours()),
+            min: zeroize(date.getMinutes()),
+            sec: zeroize(date.getSeconds()),
+            milliseconds: zeroize(date.getMilliseconds(), 3)
+        };
+
+        // 补零
+        function zeroize(n, len) {
+            len = len || 2;
+            n += '';
+            while (n.length < len) {
+                n = '0' + n;
+            }
+            return n;
+        }
+        // 返回完整时间格式
+        return dateObj.year + '' + dateObj.month + '' + dateObj.day + '' + dateObj.hours + '' + dateObj.min + '' + dateObj.sec + '' + dateObj.milliseconds;
+    }
 })();

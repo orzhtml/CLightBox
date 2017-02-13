@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>js-源生之canvas图片旋转、水平翻转、垂直翻转教程</title>
     <style>
         .center {
+        		background-color: #f1f1f1;
             border: 1px solid royalblue;
             width: 500px;
             padding-right: 15px;
@@ -16,7 +17,7 @@
         }
         
         .myImg {
-        		cursor: pointer;
+        		cursor: move;
             display: inline-block;
             position: relative;
             left: 0;
@@ -31,6 +32,12 @@
             -o-transition: -o-transform 0.5s ease-in-out;
             -ms-transition: -ms-transform 0.5s ease-in-out;
             transition: transform 0.5s ease-in-out;
+        }
+        #div1 {
+        		position: fixed;
+        		left: 50%;
+        		top: 50%;
+        		transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -51,7 +58,7 @@
             <input id="save" type="button" value="save"></input>
         </div>
     </div>
-   	<script src="js/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="js/CLightbox2.js" charset="utf-8"></script>
+   	<script src="./js/jquery-2.1.4.min.js" charset="utf-8"></script>
+    <script src="./js/CLightbox2.js" charset="utf-8"></script>
 </body>
 </html>
