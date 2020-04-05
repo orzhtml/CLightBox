@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body>
+    <canvas id="canvas" style="display: inline-block; vertical-align: middle;" data-src="blob:http://127.0.0.1:8020/f68c8cb6-1291-4323-b769-adac76351840"></canvas>
+    <script>
+        var img = new Image();
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext("2d");
+        var imgSrc = canvas.getAttribute('data-src');
+        var fileType = imgSrc.replace(/.+\.|data:image\/([^;]+).*/i, '$1');
+        img.src = imgSrc;
+        img.onload = function () {
+            _imgW = img.width;
+            _imgH = img.height;
+            _width = canvas.width = _imgW;
+            _height = canvas.height = _imgH;
+            context.drawImage(img, 0, 0);
+        };
+    </script>
+</body>
+</html>

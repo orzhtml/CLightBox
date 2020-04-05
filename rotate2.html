@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>js-源生之canvas图片旋转、水平翻转、垂直翻转教程</title>
+    <style>
+        .center {
+        		background-color: #f1f1f1;
+            border: 1px solid royalblue;
+            width: 500px;
+            padding-right: 15px;
+            padding-bottom: 15px;
+            height: 500px;
+            line-height: 500px;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .myImg {
+        		cursor: move;
+            display: inline-block;
+            position: relative;
+            left: 0;
+            top: 0;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-transition: -webkit-transform 0.5s ease-in-out;
+            -moz-transition: -moz-transform 0.5s ease-in-out;
+            -o-transition: -o-transform 0.5s ease-in-out;
+            -ms-transition: -ms-transform 0.5s ease-in-out;
+            transition: transform 0.5s ease-in-out;
+        }
+        #div1 {
+        		position: fixed;
+        		left: 50%;
+        		top: 50%;
+        		transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="div1">
+        <div id="center" class="center">
+            <img id="myImg" class="myImg" style="" src="./img/_temporary/10.jpg" alt="" />
+        </div>
+        <div>
+            <input id="rotate" type="button" value="rotate"></input>
+            <input id="horizontal" type="button" value="Flip horizontal"></input>
+            <input id="vertical" type="button" value="Flip vertical"></input>
+            <input id="zoom1" type="button" value="zoom -"></input>
+            &nbsp;<span id="percentage" style="font-size: 12px;">100%</span>&nbsp;
+            <input id="zoom2" type="button" value="zoom +"></input>
+            <input id="reset" type="button" value="reset"></input>
+            <input id="save" type="button" value="save"></input>
+        </div>
+    </div>
+   	<script src="./js/jquery-2.1.4.min.js" charset="utf-8"></script>
+    <script src="./js/CLightbox2.js" charset="utf-8"></script>
+</body>
+</html>

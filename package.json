@@ -1,0 +1,24 @@
+{
+  "name": "rotateImg",
+  "version": "1.0.0",
+  "description": "jquery-利用canvas让图片旋转角度",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:orzhtml/rotateImg.git"
+  },
+  "author": "orzhtml",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^6.3.3",
+    "cssnano": "^3.5.2",
+    "open": "^0.0.5",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-connect": "^5.0.0",
+    "gulp-postcss": "^6.1.0",
+    "gulp-sass": "^2.2.0",
+    "gulp-sequence": "^0.4.6",
+    "gulp-sourcemaps": "^1.6.0"
+  }
+}
